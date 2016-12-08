@@ -1,14 +1,15 @@
 class PocketApi {
-    constructor(config, client) {
+    constructor(config, client, dribbble) {
         this.config = config;
         this.client = client;
+        this.dribbble = dribbble;
     }
 
     requestPermission() {
         return new Promise((resolve, reject) => {
             const options = {
                 url: 'https://getpocket.com/v3/oauth/request',
-                form: {consumer_key: this.config.consumer_key, redirect_uri: '/auth',},
+                form: {consumer_key: this.config.pocket.consumer_key, redirect_uri: '/auth',},
                 headers: {
                     'X-Accept': 'application/json'
                 }
@@ -21,9 +22,10 @@ class PocketApi {
                         this.code = code;
 
                         resolve({url: `https://getpocket.com/auth/authorize?request_token=${code}&redirect_uri=${authUrl}`, code: code});
+                    }else{
+                        reject();
                     }
 
-                    reject();
                 }
             );
         });
@@ -47,7 +49,7 @@ class PocketApi {
             const options = {
                 url: 'https://getpocket.com/v3/oauth/authorize',
                 form: {
-                    consumer_key: this.config.consumer_key,
+                    consumer_key: this.config.pocket.consumer_key,
                     code: code
                 },
                 headers: {
@@ -62,22 +64,23 @@ class PocketApi {
                         this.setAccessToken(access_token);
 
                         resolve({username: username, accessCode: access_token});
+                    }else{
+                        reject();
                     }
 
-                    reject();
                 }
             );
         });
     }
 
-    getItems(){
+    getProjects(){
         return new Promise((resolve, reject) => {
             const options = {
                 url: 'https://getpocket.com/v3/get',
                 form: {
-                    consumer_key: this.config.consumer_key,
+                    consumer_key: this.config.pocket.consumer_key,
                     access_token: this.getAccessToken(),
-                    domain: 'https://dribbble.com'
+                    count: 3
                 },
                 headers: {
                     'X-Accept': 'application/json'
@@ -88,10 +91,66 @@ class PocketApi {
                     if (!error && response.statusCode == 200) {
                         const data = JSON.parse(body);
 
-                        resolve(data);
+                        const items = Object.keys(data.list).map(key => {
+                            return data.list[key];
+                        });
+
+                        console.log(items);
+
+                        resolve(items);
+                    }else{
+                        reject();
                     }
 
-                    reject();
+                }
+            );
+        });
+    }
+
+    getItems(tag = null){
+        let form = {
+            consumer_key: this.config.pocket.consumer_key,
+            access_token: this.getAccessToken(),
+            domain: 'https://dribbble.com'
+        };
+
+        if(tag !== null){
+            form.tag = tag;
+        }
+
+        return new Promise((resolve, reject) => {
+            const options = {
+                url: 'https://getpocket.com/v3/get',
+                form: form,
+                headers: {
+                    'X-Accept': 'application/json'
+                }
+            };
+            console.log("token: " + this.getAccessToken());
+
+            this.client.post(options, (error, response, body) => {
+                    if (!error && response.statusCode == 200) {
+                        const data = JSON.parse(body);
+
+                        const items = Object.keys(data.list).map(key => {
+                           return data.list[key];
+                        }).map((item) => {
+                            let imageId = item.resolved_url;
+
+                            imageId = imageId.replace('http://dribbble.com/shots/', '');
+                            imageId = imageId.replace('https://dribbble.com/shots/', '');
+                            imageId = imageId.substr(0, imageId.indexOf('-'));
+
+                            return this.dribbble.getDribbbleItem(imageId);
+                        });
+
+                        Promise.all(items).then((results) => {
+                            resolve(results);
+                        });
+                    }else{
+                        reject();
+                    }
+
                 }
             );
         });

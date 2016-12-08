@@ -4,14 +4,17 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "sass": "node-sass resources/sass/app.scss build/css/app.css --watch"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "express": "^4.14.0",
+    "node-sass": "^3.13.0",
     "pug": "^2.0.0-beta6",
-    "request": "^2.78.0",
-    "PocketApi": "latest"
+    "request": "^2.78.0"
+  },
+  "devDependencies": {
+    "webpack": "^1.13.3"
   }
 }

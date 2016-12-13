@@ -4,12 +4,13 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "sass": "node-sass resources/sass/app.scss build/css/app.css --watch"
+    "sass": "node-sass resources/sass/app.scss public/css/app.css --watch"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "express": "^4.14.0",
+    "express-handlebars": "^3.0.0",
     "node-sass": "^3.13.0",
     "pug": "^2.0.0-beta6",
     "request": "^2.78.0"

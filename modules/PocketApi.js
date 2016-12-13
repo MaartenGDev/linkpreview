@@ -93,6 +93,8 @@ class PocketApi {
 
                         const items = Object.keys(data.list).map(key => {
                             return data.list[key];
+                        }).map(item => {
+                           return {name: item.resolved_title, image: ''};
                         });
 
                         console.log(items);

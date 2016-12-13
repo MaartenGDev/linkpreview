@@ -6,28 +6,35 @@ const config = require('./config');
 
 const PocketApi = require('./modules/PocketApi');
 const DribbbleApi = require('./modules/DribbbleClient');
+const exphbs  = require('express-handlebars');
 
-app.set('views engine', 'pug');
-app.set('views', './resources/views');
 
-app.use(express.static('build'))
+app.engine('.hbs', exphbs({defaultLayout: 'main', layoutsDir: 'resources/views/layouts/', extname: '.hbs'}));
+app.set('views', 'resources/views/');
+app.set('view engine', '.hbs');
+
+app.use(express.static('public'))
 
 const dribbble = new DribbbleApi(config, request);
 const api = new PocketApi(config, request, dribbble);
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     const dribbbleUrl = dribbble.getRequestPermissionUrl();
 
-    api.requestPermission().then(({url, code}) => {
-        res.render('index.pug', {authUrl: url, dribbbleUrl: dribbbleUrl})
+    api.requestPermission().then(({url}) => {
+        res.render('login/create', {pocketUrl: url, dribbbleUrl: dribbbleUrl})
     });
+});
+
+app.get('/hbs', (req, res) => {
+    res.render('home');
 });
 
 app.get('/auth', (req, res) => {
     const token = api.getAccessCode();
 
     api.getPocketAccessToken(token).then(({username, accessCode}) => {
-        res.render('connected.pug', {username})
+        res.render('login/create', {username})
     });
 });
 
@@ -51,7 +58,7 @@ app.get('/list', (req, res) => {
 
 app.get('/projects', (req, res) => {
     api.getProjects().then(data => {
-        res.render('projects.pug', {projects: data});
+        res.render('projects', {projects: data});
     });
 });
 

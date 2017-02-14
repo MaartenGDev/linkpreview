@@ -1,5 +1,6 @@
-var express = require('express')
-var app = express()
+let express = require('express')
+let app = express()
+const port = 3000;
 
 const request = require('request');
 const config = require('./config');
@@ -7,7 +8,6 @@ const config = require('./config');
 const PocketApi = require('./modules/PocketApi');
 const DribbbleApi = require('./modules/DribbbleClient');
 const exphbs  = require('express-handlebars');
-
 
 app.engine('.hbs', exphbs({defaultLayout: 'main', layoutsDir: 'resources/views/layouts/', extname: '.hbs'}));
 app.set('views', 'resources/views/');
@@ -34,7 +34,7 @@ app.get('/auth', (req, res) => {
     const token = api.getAccessCode();
 
     api.getPocketAccessToken(token).then(({username, accessCode}) => {
-        res.render('login/create', {username})
+        res.redirect('/')
     });
 });
 
@@ -58,18 +58,18 @@ app.get('/list', (req, res) => {
 
 app.get('/projects', (req, res) => {
     api.getProjects().then(data => {
-        res.render('projects', {projects: data});
+        res.render('project/index', {projects: data});
     });
 });
 
 app.get('/projects/:tag', (req, res) => {
     const tag = req.params.tag;
 
-    api.getItems(tag).then(results => {
-        res.render('list.pug', {items: results});
+    api.getItems(tag).then(shots => {
+        res.render('project/view', {shots: shots});
     });
 });
 
-app.listen(3000, function () {
-    console.log('Example app listening on port 3000!')
+app.listen(port, _ => {
+    console.log(`Example app listening on port ${port}!`)
 })

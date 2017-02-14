@@ -1,4 +1,8 @@
-.l-container{
+.l-container {
   width: 950px;
   margin: 0 auto;
+
+  &--fluid {
+    width: calc(100% - 20px);
+  }
 }

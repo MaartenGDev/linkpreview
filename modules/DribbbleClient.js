@@ -14,8 +14,6 @@ class DribbbleApi {
         return new Promise((resolve, reject) => {
             const {client_id, state_secret, client_secret} = this.config.dribbble;
 
-            console.log(client_id, state_secret, code);
-
             const options = {
                 url: `https://dribbble.com/oauth/token?client_id=${client_id}&client_secret=${client_secret}&code=${code}`
             };
@@ -48,9 +46,6 @@ class DribbbleApi {
 
                         const image = shot.images.hidpi !== null ? shot.images.hidpi : shot.images.normal;
 
-                        if(image == null){
-                            console.log(shot);
-                        }
                         resolve({title: shot.title, image: image});
                     }else{
                         console.log(`failed shot id for: ${id}. Status Code: ${response.statusCode}`);

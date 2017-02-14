@@ -4,6 +4,20 @@ body {
 body {
   margin: 0; }
 
+body {
+  background-color: #ecf0f1; }
+
+.l-container {
+  width: 950px;
+  margin: 0 auto; }
+  .l-container--fluid {
+    width: calc(100% - 20px); }
+
+.l-projects {
+  display: flex;
+  margin-top: 10px;
+  flex-flow: wrap; }
+
 .m-nav {
   background-color: #e74c3c;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); }
@@ -18,3 +32,25 @@ body {
     display: inline-block;
     font-size: 16px;
     color: white; }
+
+.project {
+  background-color: #fff;
+  display: inline-block;
+  text-align: center;
+  margin-bottom: 22px;
+  margin-right: 10px;
+  flex-flow: row wrap;
+  padding: 10px;
+  flex-basis: calc((100% / 5) - 30px);
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2); }
+  .project:hover {
+    background-color: #f7f7f7; }
+  .project__link {
+    color: black;
+    text-decoration: none; }
+  .project__image {
+    width: calc(50% - 3px); }
+
+.link {
+  text-decoration: none;
+  color: #2a84bf; }
